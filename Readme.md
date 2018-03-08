@@ -1,4 +1,4 @@
-[![Build status](https://ci.appveyor.com/api/projects/status/28spgc5ew3ga81rj?svg=true)](https://ci.appveyor.com/project/reserfodium/virtualdesktopindicator)
+[![Build status](https://ci.appveyor.com/api/projects/status/6qwgeb3d1q9srmcy?svg=true)](https://ci.appveyor.com/project/reserfodium/capslockindicator)
 
 # Screenshot #
 ![](CapsLockEnabled.png) / ![](CapsLockDisabled.png)
