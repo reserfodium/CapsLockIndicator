@@ -1,6 +1,7 @@
 ﻿using Microsoft.Win32;
 using System;
 using System.Drawing;
+using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
 namespace CapsLockIndicator
@@ -39,15 +40,18 @@ namespace CapsLockIndicator
         #endregion
 
         #endregion
-        
+
         public TrayIndicator()
         {
             // Create icons
             capsEnabledIcon = GenerateIcon("A");
             capsDisabledIcon = GenerateIcon("a");
 
-            trayIcon = new NotifyIcon();
-            trayIcon.ContextMenuStrip = CreateContextMenu();
+            trayIcon = new NotifyIcon
+            {
+                ContextMenuStrip = CreateContextMenu()
+            };
+            trayIcon.Click += (sender, e) => ToggleCapsLock();
             SetTrayIcon();
 
             timer = new Timer();
@@ -98,6 +102,23 @@ namespace CapsLockIndicator
             {
                 key.DeleteValue(appName, false);
             }
+        }
+
+        #endregion
+
+        #region CapsLock
+
+        [DllImport("user32.dll")]
+        static extern void keybd_event(byte bVk, byte bScan, uint dwFlags, int dwExtraInfo);
+
+        private void ToggleCapsLock()
+        {
+            const byte VK_CAPITAL = 0x14;
+            const uint KEYEVENTF_EXTENDEDKEY = 0x0001;
+            const uint KEYEVENTF_KEYUP = 0x0002;
+
+            keybd_event(VK_CAPITAL, 0x45, KEYEVENTF_EXTENDEDKEY, 0);
+            keybd_event(VK_CAPITAL, 0x45, KEYEVENTF_EXTENDEDKEY | KEYEVENTF_KEYUP, 0);
         }
 
         #endregion
