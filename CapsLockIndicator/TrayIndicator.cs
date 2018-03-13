@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using System;
 using System.Drawing;
 using System.Windows.Forms;
 
@@ -7,6 +8,8 @@ namespace CapsLockIndicator
     class TrayIndicator : IDisposable
     {
         #region Data
+
+        string appName = "CapsLockIndicator";
 
         NotifyIcon trayIcon;
         Timer timer;
@@ -63,6 +66,36 @@ namespace CapsLockIndicator
 
         #region Functions
 
+        #region Autorun
+
+        private bool GetAutorunStatus()
+        {
+            using (RegistryKey key = Registry.CurrentUser.OpenSubKey("Software\\Microsoft\\Windows\\CurrentVersion\\Run", false))
+            {
+                return key.GetValue(appName) != null;
+            }
+        }
+
+        // https://www.fluxbytes.com/csharp/start-application-at-windows-startup/
+
+        private void AddApplicationToAutorun()
+        {
+            using (RegistryKey key = Registry.CurrentUser.OpenSubKey("Software\\Microsoft\\Windows\\CurrentVersion\\Run", true))
+            {
+                key.SetValue(appName, "\"" + Application.ExecutablePath + "\"");
+            }
+        }
+
+        private void RemoveApplicationFromAutorun()
+        {
+            using (RegistryKey key = Registry.CurrentUser.OpenSubKey("Software\\Microsoft\\Windows\\CurrentVersion\\Run", true))
+            {
+                key.DeleteValue(appName, false);
+            }
+        }
+
+        #endregion
+
         public void Display()
         {
             trayIcon.Visible = true;
@@ -72,6 +105,29 @@ namespace CapsLockIndicator
         private ContextMenuStrip CreateContextMenu()
         {
             var menu = new ContextMenuStrip();
+
+            // Autostartup
+            ToolStripMenuItem autostartup = new ToolStripMenuItem("Start application at Windows startup")
+            {
+                Checked = GetAutorunStatus()
+            };
+            autostartup.Click += (sender, e) =>
+            {
+                autostartup.Checked = !autostartup.Checked;
+
+                if (GetAutorunStatus())
+                {
+                    RemoveApplicationFromAutorun();
+                }
+                else
+                {
+                    AddApplicationToAutorun();
+                }
+            };
+            menu.Items.Add(autostartup);
+
+            // Separator
+            menu.Items.Add(new ToolStripSeparator());
 
             // Exit
             ToolStripMenuItem exit = new ToolStripMenuItem();
