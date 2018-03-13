@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Windows.Forms;
 
 namespace CapsLockIndicator
@@ -15,8 +14,6 @@ namespace CapsLockIndicator
             using (TrayIndicator ti = new TrayIndicator())
             {
                 ti.Display();
-
-                // Make sure the application runs!
                 Application.Run();
             }
         }

@@ -72,7 +72,13 @@ namespace CapsLockIndicator
         {
             using (RegistryKey key = Registry.CurrentUser.OpenSubKey("Software\\Microsoft\\Windows\\CurrentVersion\\Run", false))
             {
-                return key.GetValue(appName) != null;
+                object keyValue = key.GetValue(appName) ?? "";
+
+                if (keyValue.ToString() != "\"" + Application.ExecutablePath + "\"")
+                {
+                    return false;
+                }
+                else return true;
             }
         }
 
