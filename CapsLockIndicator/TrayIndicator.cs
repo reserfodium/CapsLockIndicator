@@ -51,7 +51,7 @@ namespace CapsLockIndicator
             {
                 ContextMenuStrip = CreateContextMenu()
             };
-            trayIcon.Click += (sender, e) => ToggleCapsLock();
+            trayIcon.Click += trayIcon_Click;
             SetTrayIcon();
 
             timer = new Timer();
@@ -66,6 +66,12 @@ namespace CapsLockIndicator
                 SetTrayIcon();
                 CachedCapsLockState = CapsLockState;
             }
+        }
+
+        private void trayIcon_Click(object sender, EventArgs e)
+        {
+            MouseEventArgs me = e as MouseEventArgs;
+            if (me.Button == MouseButtons.Left) ToggleCapsLock();
         }
 
         #region Functions
